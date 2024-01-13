@@ -6,12 +6,17 @@ import userRoutes from './routes/user'
 import authRoutes from './routes/auth'
 import cookieParser from "cookie-parser";
 import path from 'path';
-const { createProxyMiddleware } = require('http-proxy-middleware');
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string)
 
 const app = express();
-app.use('/api', createProxyMiddleware({ target: 'http://localhost:7000', changeOrigin: true }));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://hotel-booking-app-xuxs.onrender.com');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Credentials', "true");
+    next();
+  });
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
